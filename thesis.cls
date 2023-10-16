@@ -60,11 +60,12 @@
 \else\RequirePackage[english, ngerman]{babel}\fi
 
 \RequirePackage{fancyhdr, float, multicol, multirow, titling}
-\RequirePackage[marginal, norule, perpage]{footmisc}
+\RequirePackage[marginal, norule, perpage, multiple]{footmisc}
 \RequirePackage[dvipsnames]{xcolor}
 \RequirePackage{hyperref, url, pageslts, nameref}
 \RequirePackage{outlines, enumitem}
-\RequirePackage{booktabs, tabularx}
+\RequirePackage{booktabs, tabularx, tabulary}
+\RequirePackage{tablefootnote}
 \RequirePackage{listings}   % Required by totalcount also without minted
 \RequirePackage{graphicx, subcaption, pdfpages}
 \RequirePackage[font=small]{caption}
@@ -178,7 +179,7 @@
 \floatplacement{table}{H}   % Adjust default table float
 \floatplacement{figure}{H}  % Adjust default figure float
 
-\renewcommand\thefootnote{\Roman{footnote}} % Roman footnotes
+\renewcommand\thefootnote{\arabic{footnote}} % Roman footnotes
 \newcolumntype{Y}{p{.5\textwidth}}  % cell with 50% of text width for TabularX
 
 % ------------
@@ -350,7 +351,8 @@
 % :: End Document ::
 % Add common commands at the end of the document
 \AtEndDocument{
-    \printglossaries    % List used glossary entries
+    \printglossary[style=altlist, nonumberlist]
+    \printglossary[type=\acronymtype, title={Abkürzungsverzeichnis}, nonumberlist, nopostdot]
 
     \ifnatbib\bibliography{bibliography} % List bibliography entries with natbib
     \else   \ifen\printbibliography[heading=bibintoc]

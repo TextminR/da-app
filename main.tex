@@ -1,18 +1,18 @@
 \documentclass[minted]{thesis}
 % Required
-\title{Keine Panik!}
+\title{TextminR - Data Visualisation \& Analysis}
 % Authors
-\author{Arthur Dent}{5xHIT}{Untertitel des Themengebiets von Arthur Dent}
-\author{Ford Prefect}{5xHIT}{Untertitel des Themengebiets von Ford Prefect}
-\author{Tricia McMillan}{5xHIT}{Untertitel des Themengebiets von Tricia McMillan}
-\author{Zaphod Beeblebrox}{5xHIT}{Untertitel des Themengebiets von Zaphod Beeblebrox}
+\author{Andreas Sünder}{5BHIT}{Anbindung der Künstlichen Intelligenz}
+\author{Daniel Lengsteiner}{5BHIT}{Implementierung der Algorithmen}
+\author{Nicolas Pfeiler}{5DHIT}{Entwicklung der Weboberfläche}
+\author{Samira Ghaffari}{5CHIT}{Untersuchung der rechtlichen Fragestellungen}
 % Date of submission
-\date{4. April 2018}
+\date{4. April 2024}
 % Optional
-\mysubtitle{Mit {\LaTeX} durch die Diplomarbeit}
-\myteacher{DSc MSc Deep Thought}
-\myyear{2017/18}
-\mydivision{Medientechnik, Systemtechnik}
+\mysubtitle{Textmining Weboberfläche}
+\myteacher{Dr. DI Alexandra Posekany}
+\myyear{2023/24}
+\mydivision{Systemtechnik}
 % \selectlanguage{english}			% Set language to english
 % \selectlanguage{ngerman}			% Set language to german
 % \setcode{frame=single} 			% Add a frame to codes
@@ -25,11 +25,22 @@
 \newpage\pagestyle{fancy}
 
 \include{chapters/vorwort} 			% Include the chapter „Vorwort“
-\include{chapters/vorwort/quellen}	% Include a section of a chapter
+% \include{chapters/vorwort/quellen}	% Include a section of a chapter
 
 \include{chapters/danksagung}
 \include{chapters/einleitung}
+
+% Aufgrund der Aufgabenstellungen macht diese Reihenfolge am meisten Sinn
 \include{chapters/studie}
+\setauthor{Daniel Lengsteiner}
+\include{chapters/studie/lengsteiner-daniel-stud}
+\setauthor{Nicolas Pfeiler}
+\include{chapters/studie/pfeiler-nicolas-stud}
+\setauthor{Andreas Sünder}
+\include{chapters/studie/suender-andreas-stud}
+\setauthor{Samira Ghaffari}
+\include{chapters/studie/ghaffari-samira-stud}
+
 \include{chapters/konzept}
 \include{chapters/implementierung}
 \include{chapters/retrospektive}

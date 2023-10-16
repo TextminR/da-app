@@ -3,9 +3,33 @@
 % Akronyme können mit dem Kommando \newacronym{label}{acronym}{description} definiert und mit dem Kommand \gls{label} genutzt werden.
 \newacronym{ac:tgm}{TGM}{Technologisches Gewerbemuseum}
 
+\newacronym{ac:ki}{KI}{Künstliche Intelligenz}
+\newacronym{ac:llm}{LLM}{Large Language Model}
+\newacronym{ac:gpt}{GPT}{Generative Pre-trained Transformer}
+\newacronym{ac:llama}{Llama}{Large Language Model Meta AI}
+\newacronym{ac:lora}{LoRa}{Low-Rank Adapation}
+
+\newacronym{ac:bow}{BOW}{Bag of Words}
+\newacronym{ac:lsa}{LSA}{Latent Semantic Analasys}
+\newacronym{ac:plsa}{PLSA}{Probabilistisc Latent Semantic Analasys}
+\newacronym{ac:lda}{LDA}{Latent Dirichlet Allocation}
+\newacronym{ac:ctm}{CTM}{Correlated Topic Model}
+\newacronym{ac:dtm}{DTM}{Dynamic Topic Model}
+\newacronym{ac:hlda}{HLDA}{Hierarchical Latent Dirichlet Allocation}
+\newacronym{ac:nnmf}{NNMF}{Non-Negative Matrix Factorisation}
+
+\newacronym{ac:sa}{SA}{Sentimentanalyse}
+
 % Ein Glossareintrag wird mittels \newglossaryentry{label}{params} definiert, wobei als Parameter mindestens name und description vorhanden sein müssen. Ist ein Glossareintrag zugleich ein Akronym, kann dieses trotzdem bei der ersten Verwendung ausgeschrieben werden, indem der Parameter first angegeben wird.
-\newglossaryentry{syt}{
-	name={syt},
-	first={Systemtechnik},
-	description={\enquote{Als Systemtechnik bezeichnet man verschiedene Aufbau- und Verbindungstechniken, aber auch eine Fachrichtung der Ingenieurwissenschaften. Er bedeutet in der Unterscheidung zu den Mikrotechnologien die Verbindung verschiedener einzelner Module eines Systems und deren Konzeption.} \cite{wiki-syt}}
+\newglossaryentry{Foundation Model}{
+    name={Foundation Model},
+    first={Foundation Model},
+    plural={Foundation Models},
+    description={Als Foundation Models werden Sprachmodelle mit mehr als einer Milliarde Parametern bezeichnet, welche in der Lage sind, ganze Sätze zu erzeugen und durch das Übergeben von Anweisungen bestimmte Aufgaben zu lösen \cite[53]{PaaßGerhard2023FMfN}}
+}
+
+\newglossaryentry{Catastrophic Forgetting}{
+    name={Catastrophic Forgetting},
+    first={Catastrophic Forgetting},
+    description={Das Phänomen des \textit{Catastrophic Forgettings} (deut. \textit{Katastrophales Vergessen}) tritt dann auf, wenn vortrainierte Parameter eines Modells ohne Einfrieren verändert werden, was bei bestimmten Tuning-Methoden erforderlich ist \cite[1]{Kirkpatrick2017}. Im Gegensatz zum menschlichen Gehirn ist es nicht möglich, einer \acrshort{ac:ki} mehrere verschiedene Aufgaben \textit{hintereinander} beizubringen. Ist ein Modell bereits für eine bestimmte Aufgabe (genannt $A$) trainiert worden und soll es nun für eine weitere Aufgabe (genannt $B$) trainiert werden, so kann das Modell bereits erlernte Dinge wieder \enquote{vergessen}, da die Gewichte, die für Aufgabe $A$ relevant waren, jetzt für Aufgabe $B$ angepasst worden sind}
 }
