@@ -101,8 +101,100 @@ Das zweite Problem von vorher ist hier verstärkt (siehe Abbildung \ref{fig:res-
     \label{fig:res-lsa-textmineR}
 \end{figure}
 
+\newpage
+
+\subsubsection{Paket \codeinline{R}{tm}}\label{sec:preprocessing-packages}
+
+\paragraph{tm} The Package \codeinline{R}{tm}\cite{Feinerer2023-tm} is a powerfull package used in text mining. It is utilized in the pre-processing of textdata in this project. With a few commands, textdata is transformed into a DTM which can be used by the \codeinline{R}{topicmodels}-package to create a topic model (see \nameref{sec:topicmodels-package}).
+
+As an example, listing \ref{list:code-tm-preprocessing} shows the pre-processing of the data \codeinline{R}{poe_data}. Depending on the size of the data this process may take a while, up to several minutes. The synergy with the package \codeinline{R}{topicmodels} makes this approach especially attractive, because said package is very competent in creating proper models without taking a long time.
+
+\begin{listing}
+\begin{code}{R}
+# data has non-ASCII characters which have to be removed
+poe_data$text <- str_remove_all(poe_data$text, "[^[\\da-zA-Z ]]")
+# method DataframeSource() needs specifc column-names
+colnames(poe_data) <- c("doc_id","text")
+# creation of a usable corpus
+corpus <- tm::VCorpus(DataframeSource(poe_data))
+# Pre-processing process
+## setting all words to lower-case
+processedCorpus <- tm_map(corpus, content_transformer(tolower))
+## removing stopwords (Erklärung notwendig!)
+processedCorpus <- tm_map(processedCorpus, removeWords, stopwords())
+## all punctuations are removed, except intra-word dashes
+processedCorpus <- tm_map(processedCorpus, removePunctuation, preserve_intra_word_dashes = TRUE)
+## remove numbers
+processedCorpus <- tm_map(processedCorpus, removeNumbers)
+## stems of english language are formed (Erklärung notwendig!)
+processedCorpus <- tm_map(processedCorpus, stemDocument, language = "en")
+## remove whitespaces (space, tabs, ...)
+processedCorpus <- tm_map(processedCorpus, stripWhitespace)
+# DocumentTermMatrix is created (Erklärung?). 
+DTM <- tm::DocumentTermMatrix(processedCorpus, control = list(bounds = list(global = c(5, Inf))))
+# After vocabulary pruning, empty rows exists which have to be removed
+# before: 134322, after: 116465
+sel_idx <- slam::row_sums(DTM) > 0
+DTM <- DTM[sel_idx, ]
+\end{code}  
+    \caption{Preprocessing with the package tm}
+    \label{list:code-tm-preprocessing}
+\end{listing}
 
 
-\subsubsection{Paket \codeinline{R}{tm}}
+\paragraph{quanteda} 
 
-Das Paket \codeinline{R}{tm} ist ein sehr mächtiges Paket, welches für Textmining-Zwecke verwendet wird. 
+\subsubsection{Package \codeinline{R}{topicmodels}}\label{sec:topicmodels-package}
+
+This package supports LDA as well as CTM \cite{Grün2023-topicmodels}. The creation of both models only requires one method. 
+
+Listing \ref{list:code-topicmodels-lda-ctm} shows both of these methods in acion, using the DTM created with the package \codeinline{R}{tm} (see \nameref{sec:preprocessing-packages}). The first argument is the Document Term Matrix provided by the package \codeinline{R}{tm}. The second argument is the amount of topics the model should generate. The third argument is the method used to train the model, in this case it is the Gibbs-sampling method (EXPLANATION REQUIRED). The fourth argument is used to control the execution of the command. In this case, the number of iterations is limited to 400 to reduce the time needed to fit the model (FURTHER EXPERIMENTATION AND COMPARISON BETWEEN MODELS REQUIRED).
+
+\begin{listing}
+    \begin{code}{R}
+        topicModel_lda <- topicmodels::LDA(DTM, 40, method="Gibbs", control=list(iter=400))
+    \end{code}
+    \caption{Creation of LDA and CTM model with topicmodels}
+    \label{list:code-topicmodels-lda-ctm}
+\end{listing}
+
+
+Unfortunately, visualizing these models in not very intuitive. This study will explore two methods of visualizing the topic models created by the package \codeinline{R}{topicmodels}. 
+
+\paragraph{LDAvis} The first method is to use the Package \codeinline{R}{LDAvis}. It provides the function \codeinline{R}{serVis()} \cite[6]{Sievert2015-LDAvis}, which ouputs a visualisation of an LDA-model in a new browser window. The only parameter it needs to function is a JSON-String created by the function \codeinline{R}{createJSON()}. This method requires a lot of parameters \cite[2]{Sievert2015-LDAvis}. Listing \ref{list:code-topicmodels2LDAvis} shows a method to extract these parameters from the LDA-model and save them in the JSON-String.
+\begin{listing}
+    \begin{code}{R}
+        topicmodels2LDAvis <- function(x, ...){
+            post <- topicmodels::posterior(x)
+            if (ncol(post[["topics"]]) < 3) stop("The model must contain > 2 topics")
+                mat <- x@wordassignments
+            LDAvis::createJSON(
+                phi = post[["terms"]], 
+                theta = post[["topics"]],
+                vocab = colnames(post[["terms"]]),
+                doc.length = slam::row_sums(mat, na.rm = TRUE),
+                term.frequency = slam::col_sums(mat, na.rm = TRUE)
+            )
+        }
+        LDAvis::serVis(topicmodels2LDAvis(topicModel_lda))
+    \end{code}
+    \caption{Method for saving necessary values into JSON-String created by \codeinline{R}{createJSON}}
+    \label{list:code-topicmodels2LDAvis}
+\end{listing}
+This method has only one parameter \codeinline{R}{x}. This parameter must be a LDA-model from the package \codeinline{R}{topicmodels}. Line 2 of Listing \ref{list:code-topicmodels2LDAvis} uses the \codeinline{R}{posterior()}-function to extract the posterior probabilities from a model. The parameter \codeinline{R}{topicModel_lda} is the LDA-Model created in Listing \ref{list:code-topicmodels-lda-ctm}.
+
+Running Line 13 will result in the output shown in Figure \ref{fig:output-ldavis}. This output is highly interactive. Each model can be individually selected, either by clicking on the corresponding circle or typing the number of the topic in the text input. The words at the right hand side of the screen will change accordingly. However, because this is a seperate browser window, integrating it into a shiny-app (see \nameref{sec:visualisierung}) could prove difficult. Also, there is the issue of a potential information-overload, especially for non-data scientists.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.3]{images/dlengsteiner/output-LDAvis.png}
+    \caption{Output of LDAvis in a browser window}
+    \label{fig:output-ldavis}
+\end{figure}
+
+
+\paragraph{Custom visualisation} 
+
+
+\subsubsection{Package \codeinline{R}{stm}}
+
+
